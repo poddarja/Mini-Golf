@@ -1,0 +1,40 @@
+#include <Servo.h>
+
+Servo servoMotor; // Create a servo object to control a servo
+
+int servoPin = 9; // Pin to which the servo signal wire is connected
+int IRSensor = 8; // connect ir sensor to arduino pin 8
+int LED = 13; // conect Led to arduino pin 13
+
+void setup() {
+  pinMode(IRSensor, INPUT_PULLUP); // sensor pin INPUT
+  pinMode(LED, OUTPUT); // Led pin OUTPUT
+  servoMotor.attach(servoPin); // Attaches the servo motor to the pin
+  Serial.begin(9600);
+}
+
+void loop() {
+  int statusSensor = digitalRead(IRSensor);
+  Serial.print(statusSensor);
+  Serial.println('\n');
+  if (statusSensor == LOW) {
+    digitalWrite(LED, HIGH); // LED High
+    Serial.println("LED On - Obstacle Detected");
+    Serial.println('\n');
+
+    // Open the servo 180 degrees
+      servoMotor.write(170); // Set the servo angle
+
+    // Hold it open for 6 seconds
+    delay(6000);
+
+    // Close the servo after 6 seconds
+      servoMotor.write(10); // Set the servo angle
+
+  } else {
+    digitalWrite(LED, LOW); // LED Low
+    Serial.println("LED Off - All Clear");
+    Serial.println('\n');
+  }
+  delay(300);
+}
