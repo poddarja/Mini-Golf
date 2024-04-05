@@ -1,55 +1,28 @@
-Break beam code example from class March 19
+int IRSensor = 8; // connect ir sensor to arduino pin 8
+int LED = 13; // conect Led to arduino pin 13
 
-#include <DFRobot_DF1201S.h>
-#include <SoftwareSerial.h>
-
-// Tell Arduino which pins are wired to MP3 player (remember RX on Arduino is TX on MP3 player)
-SoftwareSerial DF1201SSerial(2, 3);  //Arduino RX, Arduino TX
-
-// object that will handle all comms to MP3 player
-DFRobot_DF1201S DF1201S;
-
- // variables will change:
-int buttonState = 0;  // variable for reading the pushbutton status
-
-const int buttonPin = 4;  // the number of the pushbutton pin
-const int ledPin = 13;    // the number of the LED pin
-
-void setup(void){
-
-  Serial.begin(57600);
-
-    // initialize the LED pin as an output:
-  pinMode(ledPin, OUTPUT);
-  // initialize the pushbutton pin as an input:
-  pinMode(buttonPin, INPUT_PULLUP);
-
-  // Initialize MP3 player communications
-  DF1201SSerial.begin(115200);
-  while(!DF1201S.begin(DF1201SSerial)){
-    Serial.println("Init failed, please check the wire connection!");
-    delay(1000);
-  }
-  DF1201S.setVol(8);  // set a low-ish volume (valid values from 0 to 30)
-  delay(500);
-  DF1201S.switchFunction(DF1201S.MUSIC); // be a music player, not a USB drive
-  delay(500);
-  DF1201S.setPlayMode(DF1201S.SINGLE); // tell it to play just one file at a time (do this after switchFunction)
-  delay(500);
+void setup() 
+{
+  pinMode (IRSensor, INPUT_PULLUP); // sensor pin INPUT
+  pinMode (LED, OUTPUT); // Led pin OUTPUT
+  Serial.begin(9600);
 }
 
-void loop() {
-  // read the state of the pushbutton value:
-  buttonState = digitalRead(buttonPin);
-  Serial.println (buttonState);
-
-  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == LOW) {
-    // turn LED on:
-    digitalWrite(ledPin, HIGH);
-    int result = DF1201S.playFileNum(2); // turn on LED if it play says it worked
-  } else {
-    // turn LED off:
-    digitalWrite(ledPin, HIGH);
+void loop()
+{
+  //digitalWrite(Emit, HIGH);
+  int statusSensor = digitalRead(IRSensor);
+  Serial.print(statusSensor);
+  Serial.println('\n');
+  if(statusSensor==LOW){ 
+    digitalWrite(LED, HIGH); // LED High
+    Serial.print("LED On - Obstacle Detected");
+    Serial.println('\n');
+    
+  }else{
+    digitalWrite(LED, LOW); // LED Low
+    Serial.print("LED Off - All Clear");
+    Serial.println('\n');
   }
+  delay(300);
 }
