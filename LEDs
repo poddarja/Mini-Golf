@@ -1,1 +1,68 @@
+#include "FastLED.h"
+#define NUM_LEDS 60
+CRGB leds[NUM_LEDS];
+#define PIN 8
 
+void setup()
+{
+  FastLED.addLeds<WS2811, PIN, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+}
+
+void loop()
+{
+  TwinkleRandom(100); // Adjust the delay as needed for the twinkling effect
+}
+
+void TwinkleRandom(int SpeedDelay)
+{
+  setAll(0, 0, 0);
+
+  while (true)
+  {
+    int pixel = random(NUM_LEDS);
+    int red = random(100);
+    int green = random(100);
+    int blue = random(100);
+    setPixel(pixel, red, green, blue);
+    showStrip();
+    delay(SpeedDelay);
+
+    // Randomly turn off and then back on some pixels
+    if (random(10) < 2) // Adjust the probability as needed
+    {
+      int offPixel = random(NUM_LEDS);
+      setPixel(offPixel, 0, 0, 0); // Turn off the pixel
+      showStrip();
+      delay(SpeedDelay); // Adjust the delay for the off period
+
+      // Turn the pixel back on with a different color
+      int onRed = random(50);
+      int onGreen = random(50);
+      int onBlue = random(50);
+      setPixel(offPixel, onRed, onGreen, onBlue);
+      showStrip();
+      delay(SpeedDelay); // Adjust the delay for the on period
+    }
+  }
+}
+
+void showStrip()
+{
+  FastLED.show();
+}
+
+void setPixel(int Pixel, byte red, byte green, byte blue)
+{
+  leds[Pixel].r = red;
+  leds[Pixel].g = green;
+  leds[Pixel].b = blue;
+}
+
+void setAll(byte red, byte green, byte blue)
+{
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    setPixel(i, red, green, blue);
+  }
+  showStrip();
+}
