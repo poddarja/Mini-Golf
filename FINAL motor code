@@ -60,10 +60,10 @@ void loop()
   myMotorDriver.setDrive( MUSHROOM_MOTOR, 0, 50); // Adjust speed as needed
 
   // Move gnome motor forward for a few seconds
-  moveGnome(60, 3000); // 20% speed for 2000 milliseconds (2 seconds)
+  moveGnome(60, 8000); // 20% speed for 2000 milliseconds (2 seconds)
 
   // Move gnome motor backward for a few seconds
-  moveGnome(-60, 3000); // -20% speed for 2000 milliseconds (2 seconds)
+  moveGnome(-60, 8000); // -20% speed for 2000 milliseconds (2 seconds)
 }
 
 // Function to move the gnome motor with specified speed and duration
