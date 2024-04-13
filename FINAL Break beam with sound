@@ -1,0 +1,73 @@
+//just break beam with sounds after we needed to take the servo out because of the debugging issues 
+ 
+ #include <DFRobot_DF1201S.h>
+#include <SoftwareSerial.h>
+
+// MP3 Player Setup
+SoftwareSerial DF1201SSerial(2, 3); // Arduino RX, Arduino TX
+DFRobot_DF1201S DF1201S;
+
+int IRSensor = 8;
+int LED = 13;
+unsigned long previousLaughTime = 0; // Variable to store the last time the laughing noise was played
+const long laughInterval = 45000; // Interval between each playing of laughing noise in milliseconds
+
+void setup() {
+  pinMode(IRSensor, INPUT_PULLUP);
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);
+
+  // Initialize MP3 player
+  DF1201SSerial.begin(115200);
+  while (!DF1201S.begin(DF1201SSerial)) {
+    Serial.println("Init failed, please check the wire connection!");
+    delay(1000);
+  }
+  DF1201S.setVol(15); // Slightly increased volume
+  delay(500);
+  DF1201S.switchFunction(DF1201S.MUSIC);
+  delay(500);
+  DF1201S.setPlayMode(DF1201S.SINGLE);
+  delay(500);
+  Serial.println("Started");
+}
+
+void loop() {
+  int statusSensor = digitalRead(IRSensor);
+  Serial.print(statusSensor);
+  Serial.println('\n');
+  
+  if (statusSensor == LOW) {
+    digitalWrite(LED, HIGH);
+    Serial.println("LED On - Obstacle Detected");
+    Serial.println('\n');
+
+    // Play falling noise
+    int result = DF1201S.playFileNum(2);
+    if (result == 1) {
+      Serial.println("Falling noise played successfully");
+    } else {
+      Serial.println("Failed to play falling noise");
+    }
+  } else {
+    digitalWrite(LED, LOW);
+    Serial.println("LED Off - All Clear");
+    Serial.println('\n');
+  }
+
+  // Check if it's time to play the laughing noise
+  unsigned long currentMillis = millis();
+  if ((currentMillis - previousLaughTime) >= laughInterval) {
+    previousLaughTime = currentMillis;
+
+    // Play laughing noise
+    int result = DF1201S.playFileNum(1);
+    if (result == 1) {
+      Serial.println("Laughing noise played successfully");
+    } else {
+      Serial.println("Failed to play laughing noise");
+    }
+  }
+
+  delay(300);
+}
